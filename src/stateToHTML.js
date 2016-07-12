@@ -266,6 +266,8 @@ class MarkupGenerator {
         let attrs = DATA_TO_ATTR.hasOwnProperty(entityType) ? DATA_TO_ATTR[entityType](entityType, entity) : null;
         let strAttrs = stringifyAttrs(attrs);
         return `<img${strAttrs}/>`;
+      } else if (entityType != null && entityType === 'VIDEO') {
+        return `<iframe allowfullscreen frameborder=0 width=300 height=200 src="${entity.data.src}"/>`
       } else {
         return content;
       }
