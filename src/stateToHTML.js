@@ -313,8 +313,8 @@ class MarkupGenerator {
           src = 'http://v.qq.com/iframe/player.html?tiny=0&auto=0&vid=' +
             qqMatch[1];
         }
-        return '<iframe width=300 height=200 src="' + src +
-          '" allowfullscreen frameborder=0/>';
+        return
+          `<iframe allowfullscreen frameborder=0 width=300 height=200 src="${entity.data.src}"/>`;
       } else {
         return content;
       }
