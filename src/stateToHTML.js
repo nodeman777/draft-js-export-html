@@ -289,7 +289,7 @@ class MarkupGenerator {
       if (entityType != null && entityType === ENTITY_TYPE.LINK) {
         var url = entity.data.url;
         var text = entity.data.text;
-        return `<a href=${url}>${text}</a>`;
+        return `<a href=${url} target='_blank'>${text}</a>`;
       } else if (entityType != null && entityType === ENTITY_TYPE.IMAGE) {
         let attrs = DATA_TO_ATTR.hasOwnProperty(entityType) ?
           DATA_TO_ATTR[entityType](entityType, entity) : null;
@@ -313,8 +313,7 @@ class MarkupGenerator {
           src = 'http://v.qq.com/iframe/player.html?tiny=0&auto=0&vid=' +
             qqMatch[1];
         }
-        return
-          `<iframe allowfullscreen frameborder=0 width=300 height=200 src="${entity.data.src}"/>`;
+        return `<iframe allowfullscreen frameborder=0 width=300 height=200 src="${entity.data.src}"/>`;
       } else {
         return content;
       }
