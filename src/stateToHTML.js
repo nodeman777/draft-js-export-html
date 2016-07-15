@@ -1,18 +1,32 @@
 /* @flow */
 
-import {Entity} from 'draft-js';
+import {
+  Entity,
+}
+from 'draft-js';
 import {
   getEntityRanges,
   BLOCK_TYPE,
   ENTITY_TYPE,
   INLINE_STYLE,
-} from 'draft-js-utils';
+}
+from 'draft-js-utils';
 
-import type {ContentState, ContentBlock, EntityInstance} from 'draft-js';
-import type {CharacterMetaList} from 'draft-js-utils';
+import type {
+  ContentState, ContentBlock, EntityInstance,
+}
+from 'draft-js';
+import type {
+  CharacterMetaList,
+}
+from 'draft-js-utils';
 
-type StringMap = {[key: string]: ?string};
-type AttrMap = {[key: string]: StringMap};
+type StringMap = {
+  [key: string]: ? string
+};
+type AttrMap = {
+  [key: string]: StringMap
+};
 
 const {
   BOLD,
@@ -28,14 +42,26 @@ const DATA_ATTRIBUTE = /^data-([a-z0-9-]+)$/;
 
 // Map entity data to element attributes.
 const ENTITY_ATTR_MAP: AttrMap = {
-  [ENTITY_TYPE.LINK]: {url: 'href', rel: 'rel', target: 'target', title: 'title', className: 'class'},
-  [ENTITY_TYPE.IMAGE]: {src: 'src', height: 'height', width: 'width', alt: 'alt', className: 'class'},
+  [ENTITY_TYPE.LINK]: {
+    url: 'href',
+    rel: 'rel',
+    target: 'target',
+    title: 'title',
+    className: 'class',
+  }, [ENTITY_TYPE.IMAGE]: {
+    src: 'src',
+    height: 'height',
+    width: 'width',
+    alt: 'alt',
+    className: 'class',
+  },
 };
 
 // Map entity data to element attributes.
 const DATA_TO_ATTR = {
   [ENTITY_TYPE.LINK](entityType: string, entity: EntityInstance): StringMap {
-    const attrMap = ENTITY_ATTR_MAP.hasOwnProperty(entityType) ? ENTITY_ATTR_MAP[entityType] : {};
+    const attrMap = ENTITY_ATTR_MAP.hasOwnProperty(entityType) ?
+      ENTITY_ATTR_MAP[entityType] : {};
     const data = entity.getData();
     const attrs = {};
     for (let dataKey of Object.keys(data)) {
@@ -48,9 +74,10 @@ const DATA_TO_ATTR = {
       }
     }
     return attrs;
-  },
-  [ENTITY_TYPE.IMAGE](entityType: string, entity: EntityInstance): StringMap {
-    let attrMap = ENTITY_ATTR_MAP.hasOwnProperty(entityType) ? ENTITY_ATTR_MAP[entityType] : {};
+  }, [ENTITY_TYPE.IMAGE](entityType: string, entity: EntityInstance):
+  StringMap {
+    let attrMap = ENTITY_ATTR_MAP.hasOwnProperty(entityType) ?
+      ENTITY_ATTR_MAP[entityType] : {};
     let data = entity.getData();
     let attrs = {};
     for (let dataKey of Object.keys(data)) {
@@ -66,7 +93,7 @@ const DATA_TO_ATTR = {
 
 // The reason this returns an array is because a single block might get wrapped
 // in two tags.
-function getTags(blockType: string): Array<string> {
+function getTags(blockType: string): Array < string > {
   switch (blockType) {
     case BLOCK_TYPE.HEADER_ONE:
       return ['h1'];
@@ -92,7 +119,7 @@ function getTags(blockType: string): Array<string> {
   }
 }
 
-function getWrapperTag(blockType: string): ?string {
+function getWrapperTag(blockType: string): ? string {
   switch (blockType) {
     case BLOCK_TYPE.UNORDERED_LIST_ITEM:
       return 'ul';
@@ -104,13 +131,13 @@ function getWrapperTag(blockType: string): ?string {
 }
 
 class MarkupGenerator {
-  blocks: Array<ContentBlock>;
+  blocks: Array < ContentBlock > ;
   contentState: ContentState;
   currentBlock: number;
   indentLevel: number;
-  output: Array<string>;
+  output: Array < string > ;
   totalBlocks: number;
-  wrapperTag: ?string;
+  wrapperTag: ? string;
 
   constructor(contentState: ContentState) {
     this.contentState = contentState;
@@ -251,7 +278,8 @@ class MarkupGenerator {
         if (style.has(CODE)) {
           // If our block type is CODE then we are already wrapping the whole
           // block in a `<code>` so don't wrap inline code elements.
-          content = (blockType === BLOCK_TYPE.CODE) ? content : `<code>${content}</code>`;
+          content = (blockType === BLOCK_TYPE.CODE) ? content :
+            `<code>${content}</code>`;
         }
         return content;
       }).join('');
@@ -259,13 +287,34 @@ class MarkupGenerator {
       // Note: The `toUpperCase` below is for compatability with some libraries that use lower-case for image blocks.
       let entityType = (entity == null) ? null : entity.getType().toUpperCase();
       if (entityType != null && entityType === ENTITY_TYPE.LINK) {
-        let attrs = DATA_TO_ATTR.hasOwnProperty(entityType) ? DATA_TO_ATTR[entityType](entityType, entity) : null;
-        let strAttrs = stringifyAttrs(attrs);
-        return `<a${strAttrs}>${content}</a>`;
+        var url = entity.data.url;
+        var text = entity.data.text;
+        return `<a href=${url}>${text}</a>`;
       } else if (entityType != null && entityType === ENTITY_TYPE.IMAGE) {
-        let attrs = DATA_TO_ATTR.hasOwnProperty(entityType) ? DATA_TO_ATTR[entityType](entityType, entity) : null;
+        let attrs = DATA_TO_ATTR.hasOwnProperty(entityType) ?
+          DATA_TO_ATTR[entityType](entityType, entity) : null;
         let strAttrs = stringifyAttrs(attrs);
         return `<img${strAttrs}/>`;
+      } else if (entityType != null && entityType === 'VIDEO') {
+        var src = entity.data.src;
+        var ytRegExp =
+          /^(?:https?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)?$/;
+        var ytMatch = src.match(ytRegExp);
+        var youkuRegExp = /\/\/v\.youku\.com\/v_show\/id_(\w+)=*\.html/;
+        var youkuMatch = src.match(youkuRegExp);
+        var qqRegExp =
+          /\/\/v\.qq\.com\/cover\/[a-zA-Z0-9]\/\w+\.html\?vid=(\w+)/;
+        var qqMatch = src.match(qqRegExp);
+        if (ytMatch && ytMatch[1].length === 11) {
+          src = '//www.youtube.com/embed/' + ytMatch[1];
+        } else if (youkuMatch && youkuMatch[1].length) {
+          src = '//player.youku.com/embed/' + youkuMatch[1];
+        } else if (qqMatch && qqMatch[1].length) {
+          src = 'http://v.qq.com/iframe/player.html?tiny=0&auto=0&vid=' +
+            qqMatch[1];
+        }
+        return '<iframe width=300 height=200 src="' + src +
+          '" allowfullscreen frameborder=0/>';
       } else {
         return content;
       }
@@ -305,7 +354,7 @@ function stringifyAttrs(attrs) {
   return parts.join('');
 }
 
-function canHaveDepth(blockType: string): boolean {
+function canHaveDepth(blockType: string) : boolean {
   switch (blockType) {
     case BLOCK_TYPE.UNORDERED_LIST_ITEM:
     case BLOCK_TYPE.ORDERED_LIST_ITEM:
