@@ -314,6 +314,10 @@ class MarkupGenerator {
         }
         return `<iframe allowfullscreen frameborder=0 width=300 height=200 src="${src}"/>`;
       } else {
+        qqMatch = src.match(/\S*v.qq.com\S*\/(\S+).html/)
+        if( qqMatch && qqMatch[1].length > 0 ) {
+             return `<iframe allowfullscreen frameborder=0 width=300 height=200 src="${src}"/>`;
+        }
         return content;
       }
     }).join('');
