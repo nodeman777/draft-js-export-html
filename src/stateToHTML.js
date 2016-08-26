@@ -283,6 +283,7 @@ class MarkupGenerator {
         }
         return content;
       }).join('');
+      console.log(entityKey)
       let entity = entityKey ? Entity.get(entityKey) : null;
       // Note: The `toUpperCase` below is for compatability with some libraries that use lower-case for image blocks.
       let entityType = (entity == null) ? null : entity.getType().toUpperCase();
@@ -302,8 +303,7 @@ class MarkupGenerator {
         var ytMatch = src.match(ytRegExp);
         var youkuRegExp = /\/\/v\.youku\.com\/v_show\/id_(\w+)=*\.html/;
         var youkuMatch = src.match(youkuRegExp);
-        var qqRegExp =
-          /\/\/v\.qq\.com\/cover\/[a-zA-Z0-9]\/\w+\.html\?vid=(\w+)/;
+        var qqRegExp = /\S*v.qq.com\S*vid=(\S+)/;
         var qqMatch = src.match(qqRegExp);
         if (ytMatch && ytMatch[1].length === 11) {
           src = '//www.youtube.com/embed/' + ytMatch[1];
@@ -313,7 +313,7 @@ class MarkupGenerator {
           src = 'http://v.qq.com/iframe/player.html?tiny=0&auto=0&vid=' +
             qqMatch[1];
         }
-        return `<iframe allowfullscreen frameborder=0 width=300 height=200 src="${entity.data.src}"/>`;
+        return `<iframe allowfullscreen frameborder=0 width=300 height=200 src="${src}"/>`;
       } else {
         return content;
       }
