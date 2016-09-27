@@ -294,7 +294,7 @@ class MarkupGenerator {
         let attrs = DATA_TO_ATTR.hasOwnProperty(entityType) ?
           DATA_TO_ATTR[entityType](entityType, entity) : null;
         let strAttrs = stringifyAttrs(attrs);
-        return `<img${strAttrs}/>`;
+        return `<img ${strAttrs} width=300 height=200/>`;
       } else if (entityType != null && entityType === 'VIDEO') {
         var src = entity.data.src;
         var ytRegExp =
@@ -311,13 +311,14 @@ class MarkupGenerator {
         } else if (qqMatch && qqMatch[1].length) {
           src = 'http://v.qq.com/iframe/player.html?tiny=0&auto=0&vid=' +
             qqMatch[1];
+        } else {
+          qqMatch = src.match(/\S*v.qq.com\S*\/(\S+).html/);
+          if(qqMatch && qqMatch[1].length) {
+              src = 'http://v.qq.com/iframe/player.html?tiny=0&auto=0&vid=' + qqMatch[1];
+          }
         }
         return `<iframe allowfullscreen frameborder=0 width=300 height=200 src="${src}"/>`;
       } else {
-        qqMatch = src.match(/\S*v.qq.com\S*\/(\S+).html/)
-        if( qqMatch && qqMatch[1].length > 0 ) {
-             return `<iframe allowfullscreen frameborder=0 width=300 height=200 src="${src}"/>`;
-        }
         return content;
       }
     }).join('');

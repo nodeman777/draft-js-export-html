@@ -1,6 +1,6 @@
 {
   "name": "nodeman-draft-js-export-html",
-  "version": "0.3.4",
+  "version": "0.3.7",
   "description": "DraftJS: Export ContentState to HTML",
   "main": "lib/main.js",
   "scripts": {
@@ -45,7 +45,7 @@
     "draft-js",
     "export-html"
   ],
-  "author": "sstur@me.com",
+  "author": "nodeman@outlook.com",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/nodeman777/draft-js-export-html/issues"
